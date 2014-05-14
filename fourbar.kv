@@ -57,12 +57,7 @@
             color: 0.2, 0.2, 0.2, 1
             size: self.texture_size
             text: fourbar.type_bar
-            canvas:
-                Color:
-                    rgba: 0, 0, 1, 0.0
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
+
         CustomButton:
             id: menu_init
             text: 'Graph'
@@ -195,11 +190,6 @@
                     BaseBar:
                         canvas:
                             Color:
-                                rgba: 0.0, 0.0, 0.0, 0.0
-                            Rectangle:
-                                pos: self.pos
-                                size: self.size
-                            Color:
                                 rgba: 0.2196, 0.6431, 0.8, 1
                             Ellipse:
                                 pos: self.x+dp(4), self.y+dp(4)
@@ -221,11 +211,6 @@
                     BaseBar:
                         canvas:
                             Color:
-                                rgba: 0.0, 0.0, 0.0, 0.0
-                            Rectangle:
-                                pos: self.pos
-                                size: self.size
-                            Color:
                                 rgba: 0.2196, 0.6431, 0.8, 1
                             Ellipse:
                                 pos: self.x+dp(4), self.y+dp(4)
@@ -246,11 +231,6 @@
                         color: 0.4, 0.3765, 0.3451, 1
                     BaseBar:
                         canvas:
-                            Color:
-                                rgba: 0.0, 0.0, 0.0, 0.0
-                            Rectangle:
-                                pos: self.pos
-                                size: self.size
                             Color:
                                 rgba: 0.2, 0.2, 0.2, 1
                             Ellipse:
@@ -326,12 +306,6 @@
                             height: dp(35)
                             text: str(int(speed.value))
                             color: 0.4, 0.3765, 0.3451, 1
-                            canvas.before:
-                                Color:
-                                    rgba: 0.8588, 0.8941, 0.60, 0
-                                Rectangle:
-                                    pos: self.pos
-                                    size: self.size
 
                 Label:
                     text: 'Step'
@@ -396,12 +370,6 @@
                 height: 3.0/2.0*root_win.height
                 width: 3.0/2.0*root_win.width
                 mid: [self.center_x, self.center_y]
-                canvas:
-                    Color:
-                        rgba: 0, 1, 1, 0.0
-                    Rectangle:
-                        pos: self.pos
-                        size: self.size
 
 
 <Point>:
@@ -468,12 +436,6 @@
     size_hint: 1, 1
     auto_dismiss: False
     separator_color: 0.3529, 0.3922, 0.102, 0.7
-    canvas.before:
-        Color:
-            rgba: 0.8588, 0.8941, 0.60, 0
-        Rectangle:
-            pos: self.x, self.y
-            size: self.width, self.height
     BoxLayout:
         id: popup_box
         orientation: 'vertical'
@@ -483,23 +445,11 @@
             source: 'data/Linkage_four_bar.png'
             allow_stretch: True
             keep_ratio: True
-            canvas.after:
-                Color:
-                    rgba: 0.0, 0.8, 0.0, 0.0
-                Rectangle:
-                    pos: self.x, self.y
-                    size: self.width, self.height
         Label:
             id: intro
             color: 0.4, 0.3765, 0.3451, 1
             text_size: self.width, None
             text: root.grashof_con_text
-            canvas.after:
-                Color:
-                    rgba: 0.8, 0.0, 0.0, 0.0
-                Rectangle:
-                    pos: self.x, self.y
-                    size: self.width, self.height
         CustomButton:
             size_hint: 1, None
             height: dp(30)
