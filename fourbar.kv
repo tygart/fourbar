@@ -1,0 +1,507 @@
+#:kivy 1.8.0
+
+<RootWindow>:
+    id:root_win
+    orientation: 'vertical'
+    bar_leng: fourbar.lengt
+    on_size: self.resize()
+    FloatLayout:
+        id: root_header
+        orientation: 'horizontal'
+        size_hint: 1, None
+        y: root_win.height-dp(50)
+        height: dp(50)
+        spacing: dp(50)
+        padding: dp(5)
+        __safe_id: [menu_graph.__self__]
+        canvas:
+            Color:
+                rgba: 0.8588, 0.8941, 0.60, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+            Color:
+                rgba: 0.3529, 0.3922, 0.102, 0.7
+            Rectangle:
+                pos: self.pos
+                size: self.width, dp(3)
+        Button:
+            id: fourbar_menu
+            text: 'test'
+            size_hint: None, None
+            pos: root_header.x + dp(15), root_header.y + dp(5)
+            size: dp(40),dp(40)
+            on_press: root.window_resize()
+            canvas.after:
+                Color:
+                    rgba: 0.8588, 0.8941, 0.60, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.width, self.height
+                Color:
+                    rgba: 0.2, 0.2, 0.2, 1
+                Rectangle:
+                    pos: self.x, self.y+dp(28)
+                    size: self.width, self.height*2/16
+                Rectangle:
+                    pos: self.x, self.y+dp(18)
+                    size: self.width, self.height*2/16
+                Rectangle:
+                    pos: self.x, self.y+dp(8)
+                    size: self.width, self.height*2/16
+        Label:
+            id:four_bar_label
+            size_hint: None, None
+            pos: root_header.x + dp(100), root_header.y + dp(5)
+            font_size: sp(36)
+            color: 0.2, 0.2, 0.2, 1
+            size: self.texture_size
+            text: fourbar.type_bar
+            canvas:
+                Color:
+                    rgba: 0, 0, 1, 0.0
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+        CustomButton:
+            id: menu_init
+            text: 'Graph'
+            size_hint: None, None
+            pos: root_header.width - dp(111), root_header.y + dp(3)
+            size: dp(100),dp(38)
+            canvas.before:
+                Color:
+                    rgba: 0.4, 0.3765, 0.3451, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.width, self.height/2
+
+        DropDown:
+            id: menu_graph
+            on_select: menu_init.text = 'Graph: {}'.format(args[1])
+            CustomButton:
+                id: graph_vel
+                text: 'velocity'
+                size_hint_y: None
+                height: dp(50)
+                on_press: root.graph_build('velocity')
+                on_release: menu_graph.select('vel.')
+                canvas.before:
+                    Color:
+                        rgba: 0.4, 0.3765, 0.3451, 1
+                    Rectangle:
+                        pos: self.pos
+                        size: self.width, self.height + dp(5)
+
+            CustomButton:
+                id: graph_delta_x
+                text: '\xce\x94X'
+                size_hint_y: None
+                height: dp(50)
+                on_press: root.graph_build('delta_x')
+                on_release: menu_graph.select('\xce\x94X')
+                canvas.before:
+                    Color:
+                        rgba: 0.4, 0.3765, 0.3451, 1
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+            CustomButton:
+                id: graph_delta_y
+                text: '\xce\x94Y'
+                size_hint_y: None
+                height: dp(50)
+                on_press: root.graph_build('delta_y')
+                on_release: menu_graph.select('\xce\x94Y')
+                canvas.before:
+                    Color:
+                        rgba: 0.4, 0.3765, 0.3451, 1
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+
+            CustomButton:
+                id: menu_close
+                text: 'none'
+                size_hint_y: None
+                height: dp(50)
+                on_press: root.graph_build('none')
+                on_release: menu_graph.select('none')
+                canvas.before:
+                    Color:
+                        rgba: 0.4, 0.3765, 0.3451, 1
+                    Rectangle:
+                        pos: self.x, self.y +self.height/2.0
+                        size: self.width, self.height/2.0
+
+    DummyNavDrawer:
+        id:nav_drawer
+        anim_type: 'slide_above_simple'
+        separator_image: 'data/navigationdrawer_gradient_ltor.png'
+        size_hint: None, None
+        width: root_win.width
+        height: root_win.height - dp(50)
+        side_panel_width: dp(200)
+
+        DummyScroll:
+            id: side_scroll
+            scroll_x: 'False'
+            size_hint: None, 1
+            width: dp(200)
+            SideWindow:
+                id: sidewindow
+                orientation: 'vertical'
+                size_hint: None, None
+                width: dp(200)
+                height: dp(1200)
+                padding: dp(6)
+                spacing: dp(6)
+                border: dp(2)
+                canvas:
+                    Color:
+                        rgba: 0.8588, 0.8941, 0.60, 1
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+                CustomButton:
+                    text: 'Grashof\'s Condition'
+                    on_press: root.intro()
+                Label:
+                    text: 'Bar Lengths'
+                    color: 0.4, 0.3765, 0.3451, 1
+                GridLayout:
+                    id: grid_leng
+                    cols: 3
+                    rows: 4
+                    size_hint: 1, None
+                    height: dp(154)
+                    spacing: dp(5)
+                    padding: dp(9)
+                    canvas:
+                        Color:
+                            rgba: 0.3529, 0.3922, 0.102, 0.7
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+                        Color:
+                            rgba: 0.8588, 0.8941, 0.60, 1
+                        Rectangle:
+                            pos: self.x + dp(3), self.y + dp(3)
+                            size: self.width - dp(6), self.height - dp(6)
+                    Label:
+                        id: couple
+                        text: str(int(root.bar_leng[3]))
+                        color: 0.4, 0.3765, 0.3451, 1
+                    BaseBar:
+                        canvas:
+                            Color:
+                                rgba: 0.0, 0.0, 0.0, 0.0
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+                            Color:
+                                rgba: 0.2196, 0.6431, 0.8, 1
+                            Ellipse:
+                                pos: self.x+dp(4), self.y+dp(4)
+                                size: dp(22), dp(22)
+                            Color:
+                                rgba: 0.8039, 0.2275, 0.3098, 1
+                            Ellipse:
+                                pos: self.x+dp(64), self.y+dp(4)
+                                size: dp(22), dp(22)
+                    Label:
+                        id: couple_ls
+                        text: root.bar_ls[3]
+                        color: 0.4, 0.3765, 0.3451, 1
+
+                    Label:
+                        id: l_bar
+                        text: str(int(root.bar_leng[2]))
+                        color: 0.4, 0.3765, 0.3451, 1
+                    BaseBar:
+                        canvas:
+                            Color:
+                                rgba: 0.0, 0.0, 0.0, 0.0
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+                            Color:
+                                rgba: 0.2196, 0.6431, 0.8, 1
+                            Ellipse:
+                                pos: self.x+dp(4), self.y+dp(4)
+                                size: dp(22), dp(22)
+                            Color:
+                                rgba: 0.2, 0.2, 0.2, 1
+                            Ellipse:
+                                pos: self.x+dp(64), self.y+dp(4)
+                                size: dp(22), dp(22)
+                    Label:
+                        id: l_bar_ls
+                        text: root.bar_ls[2]
+                        color: 0.4, 0.3765, 0.3451, 1
+
+                    Label:
+                        id: r_bar
+                        text: str(int(root.bar_leng[1]))
+                        color: 0.4, 0.3765, 0.3451, 1
+                    BaseBar:
+                        canvas:
+                            Color:
+                                rgba: 0.0, 0.0, 0.0, 0.0
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+                            Color:
+                                rgba: 0.2, 0.2, 0.2, 1
+                            Ellipse:
+                                pos: self.x+dp(4), self.y+dp(4)
+                                size: dp(22), dp(22)
+                            Color:
+                                rgba: 0.8039, 0.2275, 0.3098, 1
+                            Ellipse:
+                                pos: self.x+dp(64), self.y+dp(4)
+                                size: dp(22), dp(22)
+                    Label:
+                        id: r_bar_ls
+                        text: root.bar_ls[1]
+                        color: 0.4, 0.3765, 0.3451, 1
+
+                    Label:
+                        id: frame
+                        text: str(int(root.bar_leng[0]))
+                        color: 0.4, 0.3765, 0.3451, 1
+                    BaseBar:
+                        canvas:
+                            Color:
+                                rgba: 0.0, 0.0, 0.0, 0.0
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+                            Color:
+                                rgba: 0.2, 0.2, 0.2, 1
+                            Ellipse:
+                                pos: self.x+dp(4), self.y+dp(4)
+                                size: dp(22), dp(22)
+                            Color:
+                                rgba: 0.2, 0.2, 0.2, 1
+                            Ellipse:
+                                pos: self.x+dp(64), self.y+dp(4)
+                                size: dp(22), dp(22)
+                    Label:
+                        id: frame_ls
+                        text: root.bar_ls[0]
+                        color: 0.4, 0.3765, 0.3451, 1
+
+                Label:
+                    text: 'Motion Control'
+                    color: 0.4, 0.3765, 0.3451, 1
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint: 1, None
+                    height: dp(235)
+                    BoxLayout:
+                        orientation: 'vertical'
+                        spacing: 5
+                        CustomButton:
+                            text: 'Pause'
+                            on_press: root.pause()
+                        CustomButton:
+                            text: 'Reset'
+                            on_press: root.example('reset')
+                        CustomButton:
+                            text: 'Center'
+                            on_press: root.r_reset()
+                        CustomButton:
+                            text: 'Direction'
+                            on_press: root.switch()
+                    StackLayout:
+                        orientation: 'lr-tb'
+                        CustomSlider:
+
+                            id: speed
+                            on_value: root.speed()
+
+                        Label:
+                            size_hint: 1,None
+                            height: dp(35)
+                            text: str(int(speed.value))
+                            color: 0.4, 0.3765, 0.3451, 1
+                            canvas.before:
+                                Color:
+                                    rgba: 0.8588, 0.8941, 0.60, 0
+                                Rectangle:
+                                    pos: self.pos
+                                    size: self.size
+
+                Label:
+                    text: 'Step'
+                    color: 0.4, 0.3765, 0.3451, 1
+                BoxLayout:
+                    id:move_one
+                    orientation: 'horizontal'
+                    spacing: dp(5)
+                    CustomButton:
+                        id: minus_one
+                        text: '-'
+                        font_size: sp(30)
+                        on_press: root.start_step(-1)
+                        on_release: root.pause()
+                    CustomButton:
+                        id: plus_one
+                        text: '+'
+                        font_size: sp(30)
+                        on_press: root.start_step(1)
+                        on_release: root.pause()
+
+                Label:
+                    text: 'File'
+                    color: 0.4, 0.3765, 0.3451, 1
+                BoxLayout:
+                    id:file_box
+                    orientation: 'horizontal'
+                    spacing: dp(5)
+                    CustomButton:
+                        text: 'Save'
+                        on_press: root.save_points()
+                    CustomButton:
+                        text: 'Load'
+                        on_press: root.load_points()
+                Label:
+                    text:'Example Cases'
+                    color: 0.4, 0.3765, 0.3451, 1
+                CustomButton:
+                    text: 'Drag Link'
+                    on_press: root.example('dc')
+                CustomButton:
+                    text: 'Crank-Rocker'
+                    on_press: root.example('cr')
+                CustomButton:
+                    text: 'Rocker-Crank'
+                    on_press: root.example('rc')
+                CustomButton:
+                    text: 'Double Rocker'
+                    on_press: root.example('dr')
+                CustomButton:
+                    text: 'Parallelogram Linkage'
+                    on_press: root.example('p')
+
+        DummyScroll:
+            id:fourbar_scroll
+            scroll_distance: 50
+
+            FourBars:
+                id:fourbar
+                size_hint: None, None
+                pos: 0,0
+                height: 3.0/2.0*root_win.height
+                width: 3.0/2.0*root_win.width
+                mid: [self.center_x, self.center_y]
+                canvas:
+                    Color:
+                        rgba: 0, 1, 1, 0.0
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+
+
+<Point>:
+    id: self.name
+
+
+<BaseBar>:
+    size_hint: None, None
+    size: dp(90), dp(30)
+    canvas:
+        Color:
+            rgba: 0.4, 0.3765, 0.3451, 1
+        Ellipse:
+            pos: self.x, self.y
+            size: dp(30), dp(30)
+        Ellipse:
+            pos: self.x+dp(60), self.y
+            size: dp(30), dp(30)
+        Line:
+            points: self.x+dp(15), self.y+dp(15), self.x + dp(75), self.y+dp(15)
+            width: dp(2)
+
+
+<CustomButton>:
+    color: 0.8588, 0.8941, 0.60, 1
+    background_normal: 'data/fourbar_up.png'
+	background_down: 'data/fourbar_down.png'
+
+
+<CustomSlider>:
+    orientation: 'vertical'
+    size_hint: 1, None
+    height: dp(200)
+    pos: 0, dp(10)
+    step: 1
+    min: 1
+    value: 3
+    max: 6
+    canvas.after:
+        Color:
+            rgba: 0.8588, 0.8941, 0.60, 1
+        Rectangle:
+            pos: self.x, self.y - dp(10)
+            size: self.width, self.height + dp(20)
+        Color:
+            rgb: 1, 1, 1
+        BorderImage:
+            border:  (dp(18), 0, dp(18), 0)
+            pos: (self.center_x - dp(18), self.y)
+            size: (dp(37), self.height)
+            source: 'data/sliderv_background.png'
+        Rectangle:
+            pos: (self.center_x - dp(16), self.value_pos[1] - dp(16))
+            size: (dp(32), dp(32))
+            source: 'data/slider_cursor.png'
+
+
+<GrashofPopup>:
+    id: popup
+    background: 'data/popup.png'
+    title: 'Grashof\'s Condition'
+    title_size: sp(30)
+    title_color: 0.4, 0.3765, 0.3451, 1
+    size_hint: 1, 1
+    auto_dismiss: False
+    separator_color: 0.3529, 0.3922, 0.102, 0.7
+    canvas.before:
+        Color:
+            rgba: 0.8588, 0.8941, 0.60, 0
+        Rectangle:
+            pos: self.x, self.y
+            size: self.width, self.height
+    BoxLayout:
+        id: popup_box
+        orientation: 'vertical'
+
+        Image:
+            id: cases_pic
+            source: 'data/Linkage_four_bar.png'
+            allow_stretch: True
+            keep_ratio: True
+            canvas.after:
+                Color:
+                    rgba: 0.0, 0.8, 0.0, 0.0
+                Rectangle:
+                    pos: self.x, self.y
+                    size: self.width, self.height
+        Label:
+            id: intro
+            color: 0.4, 0.3765, 0.3451, 1
+            text_size: self.width, None
+            text: root.grashof_con_text
+            canvas.after:
+                Color:
+                    rgba: 0.8, 0.0, 0.0, 0.0
+                Rectangle:
+                    pos: self.x, self.y
+                    size: self.width, self.height
+        CustomButton:
+            size_hint: 1, None
+            height: dp(30)
+            text: 'Close'
+            on_press: root.dismiss()
