@@ -57,7 +57,6 @@ class FourBars(FloatLayout):
         self.pos_db = []
         self.max_time = 180
 
-
     def add_points(self):
         self.add_widget(self.pnt_a)
         self.add_widget(self.pnt_b)
@@ -176,7 +175,6 @@ class FourBars(FloatLayout):
 
             self.pnt_d.map_x = leng[1]*math.cos(ang[1]*math.pi/180)+self.pnt_b.map_x
             self.pnt_d.map_y = leng[1]*math.sin(ang[1]*math.pi/180)+self.pnt_b.map_y
-            #print(ang)
 
             if len(self.trace_c) < 1024:
                 self.trace_c.extend([self.pnt_c.map_x+self.rad, self.pnt_c.map_y+self.rad])
@@ -311,7 +309,8 @@ class FourBars(FloatLayout):
             o_db = (o_ca*leng[2]*math.sin((ang[3]-ang[0])*math.pi/180)) / \
                    (leng[1]*math.sin((ang[3]-ang[1])*math.pi/180))
 
-        elif self.type_bar == 'S + L > P + Q':
+        else:
+            #self.type_bar == 'S + L > P + Q':
             o_ca, o_dc, o_db = 0, 0, 0
 
         self.omega_ca.append(o_ca)
@@ -329,11 +328,9 @@ class FourBars(FloatLayout):
             self.pos_dc.pop(0)
             self.pos_db.pop(0)
 
-
         if len(self.omega_ca) > self.max_time:
             print('fourbar reset called. too big!')
             Clock.schedule_once(self.reset, 0)
-
 
     def transition(self, dt):
         leng = self.calc_lengths()
@@ -348,7 +345,7 @@ class FourBars(FloatLayout):
         a_x = trace[-4]
         a_y = trace[-3]
         hyp = ((b_y - a_y)**2 + (b_x - a_x)**2)**0.5
-        theta= math.acos((2*leng**2-hyp**2)/(2*leng**2))*180/math.pi
+        theta = math.acos((2*leng**2-hyp**2)/(2*leng**2))*180/math.pi
 
         a = 1
         if (new - old < 0 or new - old > 180) and new - old > -180:
@@ -368,7 +365,6 @@ class FourBars(FloatLayout):
     def add_lines(self):
         a = self.rad
         b = dp(2)
-        c = 1
         bars = []
         for pnt in self.pnts:
             bars.append(pnt.map_x)
@@ -436,9 +432,9 @@ class FourBars(FloatLayout):
 
         return [theta_ca_zero, theta_db_zero, theta_ba_zero, theta_dc_zero]
 
-    def type_of(self, lengthz):
+    def type_of(self, lengthy):
 
-        lengths = list(lengthz)
+        lengths = list(lengthy)
         shortest = None
         for i in range(len(lengths)):
             if lengths[i] == min(lengths) or shortest is None:
@@ -463,7 +459,7 @@ class FourBars(FloatLayout):
             self.type_bar = 'S + L > P + Q'
 
     def on_touch_move(self, touch):
-        #print('move')
+
         for pnt in self.pnts:
             if pnt.hold_me is True or (abs(pnt.map_x-touch.x) < 2*self.rad and abs(pnt.map_y-touch.y) < 2*self.rad):
                 if self.hold_one is False or pnt.hold_me is True:
@@ -505,8 +501,8 @@ class FourBars(FloatLayout):
             self.lengt = self.calc_lengths()
 
             self.touch_test = True
-            #print('-----RESTART-----'*10)
             Clock.schedule_interval(self.update, 1.0 / 30.0)
+
 
 class Point(Widget):
 
@@ -569,13 +565,12 @@ class RootWindow(FloatLayout):
         Clock.schedule_interval(self.ids.fourbar.update, 1.0 / 30.0)
 
     def r_reset(self):
-        self.legend_set_SandL()
+        self.legend_set_sandl()
         self.pause()
         Clock.schedule_once(self.ids.fourbar.reset, -1)
         self.unpause()
 
-
-    def legend_set_SandL(self):
+    def legend_set_sandl(self):
 
         self.bar_leng = self.ids.fourbar.lengt
         shortest = None
@@ -612,7 +607,7 @@ class RootWindow(FloatLayout):
 
     def update_leng(self, *args):
 
-        self.legend_set_SandL()
+        self.legend_set_sandl()
         self.r_speed_test()
 
         if self.update_points is True and len(self.ids.fourbar.omega_ca) > 90 and self.graph_type is not 'none':
@@ -645,7 +640,6 @@ class RootWindow(FloatLayout):
             self.update_points = False
             self.graph_kill()
             Clock.schedule_once(partial(self.graph_build, self.graph_type), 1)
-
 
     def test_y_pos(self):
 
@@ -708,36 +702,36 @@ class RootWindow(FloatLayout):
     def points_fn(self):
         return join(self.save_path, 'fourbar.json')
 
-    def example(self, type, condit=False, *args):
+    def example(self, beta, condit=False, *args):
 
-        pnts=self.ids.fourbar.pnts  # [a,b,d,c]
+        pnts = self.ids.fourbar.pnts  # [a,b,d,c]
 
-        if type is 'dc':
+        if beta is 'dc':
             pnts[0].map_x, pnts[0].map_y = dp(0), dp(0)
             pnts[1].map_x, pnts[1].map_y = dp(75), dp(0)
             pnts[3].map_x, pnts[3].map_y = dp(0), dp(90)
             pnts[2].map_x, pnts[2].map_y = dp(170), dp(175)
-        elif type is 'dr':
+        elif beta is 'dr':
             pnts[0].map_x, pnts[0].map_y = dp(0), dp(0)
             pnts[1].map_x, pnts[1].map_y = dp(190), dp(0)
             pnts[3].map_x, pnts[3].map_y = dp(30), dp(175)
             pnts[2].map_x, pnts[2].map_y = dp(160), dp(175)
-        elif type is 'cr':
+        elif beta is 'cr':
             pnts[0].map_x, pnts[0].map_y = dp(0), dp(0)
             pnts[1].map_x, pnts[1].map_y = dp(200), dp(10)
             pnts[3].map_x, pnts[3].map_y = dp(0), dp(125)
             pnts[2].map_x, pnts[2].map_y = dp(190), dp(200)
-        elif type is 'rc':
+        elif beta is 'rc':
             pnts[0].map_x, pnts[0].map_y = dp(20), dp(200)
             pnts[1].map_x, pnts[1].map_y = dp(175), dp(185)
             pnts[3].map_x, pnts[3].map_y = dp(0), dp(60)
             pnts[2].map_x, pnts[2].map_y = dp(160), dp(65)
-        elif type is 'p':
+        elif beta is 'p':
             pnts[0].map_x, pnts[0].map_y = dp(0), dp(0)
             pnts[1].map_x, pnts[1].map_y = dp(100), dp(0)
             pnts[3].map_x, pnts[3].map_y = dp(0), dp(150)
             pnts[2].map_x, pnts[2].map_y = dp(100), dp(150)
-        elif type is 'reset':
+        elif beta is 'reset':
             pnts[0].map_x, pnts[0].map_y = dp(0), dp(0)
             pnts[1].map_x, pnts[1].map_y = dp(100), dp(0)
             pnts[3].map_x, pnts[3].map_y = dp(0), dp(100)
@@ -764,12 +758,12 @@ class RootWindow(FloatLayout):
     def round_down(self, x):
         return int(math.floor(x / 5.0)) * 5
 
-    def graph_build(self, type, *args):
+    def graph_build(self, alpha, *args):
 
         self.graph_kill()
-        self.graph_type = type
+        self.graph_type = alpha
 
-        if type is 'velocity':
+        if alpha is 'velocity':
             self.update_points = True
             x = self.calc_y_axis()
             if x[2] == 0:
@@ -787,7 +781,7 @@ class RootWindow(FloatLayout):
             self.graph.add_plot(self.plot_dc)
             self.add_widget(self.graph)
 
-        if type is 'delta_x':
+        if alpha is 'delta_x':
             self.update_points = True
 
             self.y_max = int(max(self.ids.fourbar.lengt))
@@ -804,7 +798,7 @@ class RootWindow(FloatLayout):
             self.graph.add_plot(self.plot_dc)
             self.add_widget(self.graph)
 
-        if type is 'delta_y':
+        if alpha is 'delta_y':
             self.update_points = True
 
             self.y_max = int(max(self.ids.fourbar.lengt))
@@ -848,14 +842,14 @@ class RootWindow(FloatLayout):
     def graphy(self):
 
         graph_theme = {'label_options': {'color': rgb('595959'), 'bold': False}, 'background_color': rgb('DBE49A'),
-                           'tick_color': rgb('999999'), 'border_color': rgb('808080')}
+                       'tick_color': rgb('999999'), 'border_color': rgb('808080')}
 
         self.graph = CustomGraph(pos=(self.width-dp(410), self.height - dp(347)), size_hint = (None, None),
-                           size = (dp(410), dp(300)), xlabel='Time', ylabel=self.title, x_ticks_minor=5,
-                           x_ticks_major=30, y_ticks_major=self.y_tick, y_grid_label=True, x_grid_label=True,
-                           padding=10, xlog=False, ylog=False, x_grid=True, y_grid=True, xmin=0,
-                           xmax=self.ids.fourbar.max_time, ymin=self.y_min, ymax=self.y_max, draw_border = True,
-                           **graph_theme)
+                                 size = (dp(410), dp(300)), xlabel='Time', ylabel=self.title, x_ticks_minor=5,
+                                 x_ticks_major=30, y_ticks_major=self.y_tick, y_grid_label=True, x_grid_label=True,
+                                 padding=10, xlog=False, ylog=False, x_grid=True, y_grid=True, xmin=0,
+                                 xmax=self.ids.fourbar.max_time, ymin=self.y_min, ymax=self.y_max, draw_border = True,
+                                 **graph_theme)
 
     def graph_kill(self):
 
