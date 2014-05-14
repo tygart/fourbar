@@ -570,10 +570,8 @@ class RootWindow(FloatLayout):
 
     def r_reset(self):
         self.legend_set_SandL()
-        #self.update_leng()
         self.pause()
         Clock.schedule_once(self.ids.fourbar.reset, -1)
-        #self.ids.fourbar.reset()
         self.unpause()
 
 
@@ -750,9 +748,6 @@ class RootWindow(FloatLayout):
             self.ids.nav_drawer.adjust_sidepanel()
             self.ids.fourbar_scroll.scroll_y = 0.5
             self.ids.fourbar_scroll.scroll_x = 0.5
-            #self.graph_build('none')
-            #self.ids.menu_graph.open(self.ids.menu_close)
-            #self.ids.menu_graph.select('none')
             Clock.schedule_once(self.intro, 0)
             Clock.schedule_interval(self.update_leng, 1.0/30.0)
 
@@ -784,9 +779,9 @@ class RootWindow(FloatLayout):
             self.y_min, self.y_max, self.y_tick, self.title = x[0], x[1], x[2], 'Angular Velocity'
             self.graphy()
 
-            self.plot_ca.points = [(x, y) for x,y in enumerate(self.ids.fourbar.omega_ca)]
-            self.plot_db.points = [(x, y) for x,y in enumerate(self.ids.fourbar.omega_db)]
-            self.plot_dc.points = [(x, y) for x,y in enumerate(self.ids.fourbar.omega_dc)]
+            self.plot_ca.points = [(x, y) for x, y in enumerate(self.ids.fourbar.omega_ca)]
+            self.plot_db.points = [(x, y) for x, y in enumerate(self.ids.fourbar.omega_db)]
+            self.plot_dc.points = [(x, y) for x, y in enumerate(self.ids.fourbar.omega_dc)]
             self.graph.add_plot(self.plot_ca)
             self.graph.add_plot(self.plot_db)
             self.graph.add_plot(self.plot_dc)
@@ -801,9 +796,9 @@ class RootWindow(FloatLayout):
             self.title = 'Horizontal Translation'
 
             self.graphy()
-            self.plot_ca.points = [(x, y[0]*math.cos(y[1]*math.pi/180)) for x,y in enumerate(self.ids.fourbar.pos_ca)]
-            self.plot_db.points = [(x, y[0]*math.cos(y[1]*math.pi/180)) for x,y in enumerate(self.ids.fourbar.pos_db)]
-            self.plot_dc.points = [(x, y[0]*math.cos(y[1]*math.pi/180)) for x,y in enumerate(self.ids.fourbar.pos_dc)]
+            self.plot_ca.points = [(x, y[0]*math.cos(y[1]*math.pi/180)) for x, y in enumerate(self.ids.fourbar.pos_ca)]
+            self.plot_db.points = [(x, y[0]*math.cos(y[1]*math.pi/180)) for x, y in enumerate(self.ids.fourbar.pos_db)]
+            self.plot_dc.points = [(x, y[0]*math.cos(y[1]*math.pi/180)) for x, y in enumerate(self.ids.fourbar.pos_dc)]
             self.graph.add_plot(self.plot_ca)
             self.graph.add_plot(self.plot_db)
             self.graph.add_plot(self.plot_dc)
@@ -884,13 +879,12 @@ class CustomGraph(Graph):
     def __init__(self, **kwargs):
         super(CustomGraph, self).__init__(**kwargs)
 
-        #with self._plot_area.canvas.before:
         with self._fbo:
-            Color(0.349, 0.349,0.349 , 1)
-            Rectangle(pos=(dp(0),dp(0)), size=(dp(5),dp(300)))
-            Rectangle(pos=(dp(0),dp(295)), size=(dp(410),dp(5)))
-            Rectangle(pos=(dp(405),dp(295)), size=(dp(5),-dp(295)))
-            Rectangle(pos=(dp(0),dp(0)), size=(dp(410),dp(5)))
+            Color(0.349, 0.349, 0.349, 1)
+            Rectangle(pos=(dp(0), dp(0)), size=(dp(5), dp(300)))
+            Rectangle(pos=(dp(0), dp(295)), size=(dp(410), dp(5)))
+            Rectangle(pos=(dp(405), dp(295)), size=(dp(5), -dp(295)))
+            Rectangle(pos=(dp(0), dp(0)), size=(dp(410), dp(5)))
 
 
 class SideWindow(BoxLayout):
