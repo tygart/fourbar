@@ -1,4 +1,4 @@
-__version__ = '0.1.9'
+__version__ = '0.2.0'
 
 from kivy.app import App
 from kivy.clock import Clock
@@ -82,13 +82,13 @@ class FourBars(FloatLayout):
 
     def build_grid(self, delta):
 
-        delta=dp(delta)
+        delta = dp(delta)
         max_grid = (dp(self.mid[0]*2), dp(self.mid[1]*2))
 
-        grid=[0,0]
+        grid = [0, 0]
         for x in range(0, int(max_grid[1]/(2*delta))+1, 1):
             grid.extend([0, grid[-1]+delta, max_grid[0], grid[-1]+delta, max_grid[0], grid[-1]+2*delta,
-                         0,grid[-1]+2*delta])
+                         0, grid[-1]+2*delta])
         grid.extend([0,0])
         for x in range(0, int(max_grid[0]/(2*delta))+1, 1):
             grid.extend([grid[-2]+delta, 0, grid[-2]+delta, max_grid[1],
@@ -148,12 +148,12 @@ class FourBars(FloatLayout):
     def update(self, dt):
         leng = self.lengt
         ang = self.calc_angles()
+        old_d = (self.pnt_d.map_x, self.pnt_d.map_y, ang[1])
+        old_c = (self.pnt_c.map_x, self.pnt_c.map_y, ang[0])
 
         if not self.type_bar == 'S + L > P + Q':
-
             self.graph_update(leng, ang)
-            old_d = (self.pnt_d.map_x, self.pnt_d.map_y, ang[1])
-            old_c = (self.pnt_c.map_x, self.pnt_c.map_y, ang[0])
+
         self.remove_widget(self.lines)
 
         if self.type_bar == 'Drag Link' or self.type_bar == 'Crank-Rocker' or self.type_bar == 'Parallelogram Linkage':
@@ -224,10 +224,8 @@ class FourBars(FloatLayout):
             self.pnt_c.map_x = leng[2]*math.cos(ang[0]*math.pi/180)+self.pnt_a.map_x
             self.pnt_c.map_y = leng[2]*math.sin(ang[0]*math.pi/180)+self.pnt_a.map_y
 
-            self.pnt_d.map_x = leng[2]*math.cos(ang[0]*math.pi/180)+leng[3]*math.cos(ang[3]*math.pi/180) + \
-                                   self.pnt_a.map_x
-            self.pnt_d.map_y = leng[2]*math.sin(ang[0]*math.pi/180)+leng[3]*math.sin(ang[3]*math.pi/180) + \
-                                   self.pnt_a.map_y
+            self.pnt_d.map_x=leng[2]*math.cos(ang[0]*math.pi/180)+leng[3]*math.cos(ang[3]*math.pi/180)+self.pnt_a.map_x
+            self.pnt_d.map_y=leng[2]*math.sin(ang[0]*math.pi/180)+leng[3]*math.sin(ang[3]*math.pi/180)+self.pnt_a.map_y
             ang = self.calc_angles()
 
             if len(self.trace_c) < 1024:
@@ -329,7 +327,6 @@ class FourBars(FloatLayout):
             self.pos_db.pop(0)
 
         if len(self.omega_ca) > self.max_time:
-            print('fourbar reset called. too big!')
             Clock.schedule_once(self.reset, 0)
 
     def transition(self, dt):
@@ -522,8 +519,8 @@ class Point(Widget):
 
 class RootWindow(FloatLayout):
 
-    bar_leng = ListProperty([0,0,0,0])
-    bar_ls = ListProperty(['','','',''])
+    bar_leng = ListProperty([0, 0, 0, 0])
+    bar_ls = ListProperty(['', '', '', ''])
 
     def __init__(self, **kwargs):
         super(RootWindow, self).__init__(**kwargs)
@@ -652,7 +649,7 @@ class RootWindow(FloatLayout):
         #print('---RESIZE---'*10)
         try:
             self.ids.fourbar.remove_widget(self.ids.fourbar.graph_paper)
-            Clock.schedule_once(self.ids.fourbar.graph_paper_draw,0)
+            Clock.schedule_once(self.ids.fourbar.graph_paper_draw, 0)
             self.graph_kill()
             self.update_points = False
             if self.graph_type is not 'none':
@@ -818,7 +815,7 @@ class RootWindow(FloatLayout):
     def calc_y_axis(self):
 
         if len(self.ids.fourbar.omega_ca) < 90 or self.ids.fourbar.omega_ca is []:
-            return (0,0,0)
+            return (0, 0, 0)
 
         data = [self.ids.fourbar.omega_ca, self.ids.fourbar.omega_db, self.ids.fourbar.omega_dc]
         y_max = 0
@@ -873,6 +870,7 @@ class CustomGraph(Graph):
     def __init__(self, **kwargs):
         super(CustomGraph, self).__init__(**kwargs)
 
+
         with self._fbo:
             Color(0.349, 0.349, 0.349, 1)
             Rectangle(pos=(dp(0), dp(0)), size=(dp(5), dp(300)))
@@ -917,6 +915,7 @@ class DummyNavDrawer(NavigationDrawer):
 
     def adjust_sidepanel(self):
         self.side_panel_width = dp(200)
+        self.separator_image = 'data/navigationdrawer_gradient_ltor.png'
 
 
 class CustomButton(Button):
