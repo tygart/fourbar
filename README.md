@@ -6,7 +6,7 @@ The buildozer tool can be used to build the app, or the android apk in the bin c
 fourbar is a multitouch app simulating a four a bar linkage. This app allows one to examine the motion of any four-bar
 linkage that satisfies Grashof's condition.  The condition simply states that if sum of the longest and shortest members
 of a four bar linkage are less than the sum of the other two, the smallest member can make a full rotation with respect
-it's neighbor. When this condition is satisfied, the app will at a constantly velocity rotate the smallest member.  This
+it's neighbor. When this condition is satisfied, the app will  rotate the smallest member at a constantly velocity.  This
 leads to some interesting mechanical behaviors that are difficult to express from a book or in a lecture setting.  The
 app is also not math heavy.  Rather learning is accomplished through observation and experimentation.  While the app is
 aimed more at engineering students, I think others will find it interesting if not peek someones interest in the phsical
