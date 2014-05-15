@@ -19,7 +19,7 @@ from kivy.uix.scrollview import ScrollView
 from kivy.effects.scroll import ScrollEffect
 from kivy.uix.dropdown import DropDown
 from kivy.garden.navigationdrawer import NavigationDrawer
-from kivy.garden.graph import Graph, MeshLinePlot
+from kivy.garden.graph import Graph, MeshLinePlot, SmoothLinePlot
 from kivy.utils import get_color_from_hex as rgb
 import math
 import json
@@ -89,7 +89,7 @@ class FourBars(FloatLayout):
         for x in range(0, int(max_grid[1]/(2*delta))+1, 1):
             grid.extend([0, grid[-1]+delta, max_grid[0], grid[-1]+delta, max_grid[0], grid[-1]+2*delta,
                          0, grid[-1]+2*delta])
-        grid.extend([0,0])
+        grid.extend([0, 0])
         for x in range(0, int(max_grid[0]/(2*delta))+1, 1):
             grid.extend([grid[-2]+delta, 0, grid[-2]+delta, max_grid[1],
                          grid[-2]+2*delta, max_grid[1], grid[-2]+2*delta, 0])
@@ -114,13 +114,13 @@ class FourBars(FloatLayout):
             if max_y is None or pnt.map_y >= max_y:
                 max_y = pnt.map_y
 
-        dx = (max_x - min_x)/2
-        dy = (max_y - min_y)/2
+        dx = (max_x - min_x)/2.0
+        dy = (max_y - min_y)/2.0
         zero_pnt = list([hyp_pnt.map_x, hyp_pnt.map_y])
 
         for pnt in self.pnts:
-            pnt.map_x = pnt.map_x + self.mid[0] - dx - zero_pnt[0]
-            pnt.map_y = pnt.map_y + self.mid[1] - dy - zero_pnt[1]
+            pnt.map_x = (pnt.map_x + self.mid[0] - dx - zero_pnt[0])
+            pnt.map_y = (pnt.map_y + self.mid[1] - dy - zero_pnt[1])
 
         self.lengt = self.calc_lengths()
         self.type_of(self.lengt)
@@ -145,7 +145,16 @@ class FourBars(FloatLayout):
             angle -= 360
         return angle
 
+    def trace_test(self, trace, x, y):
+        if not trace:
+            return True
+        z = ((x - trace[-2])**2 + (y - trace[-1])**2)**0.5
+        if z < dp(5.0):
+            return False
+        return True
+
     def update(self, dt):
+
         leng = self.lengt
         ang = self.calc_angles()
         old_d = (self.pnt_d.map_x, self.pnt_d.map_y, ang[1])
@@ -153,8 +162,11 @@ class FourBars(FloatLayout):
 
         if not self.type_bar == 'S + L > P + Q':
             self.graph_update(leng, ang)
-
-        self.remove_widget(self.lines)
+        try:
+            self.remove_widget(self.lines)
+        except AttributeError as e:
+            print(e)
+            pass
 
         if self.type_bar == 'Drag Link' or self.type_bar == 'Crank-Rocker' or self.type_bar == 'Parallelogram Linkage':
 
@@ -176,10 +188,15 @@ class FourBars(FloatLayout):
             self.pnt_d.map_x = leng[1]*math.cos(ang[1]*math.pi/180)+self.pnt_b.map_x
             self.pnt_d.map_y = leng[1]*math.sin(ang[1]*math.pi/180)+self.pnt_b.map_y
 
-            if len(self.trace_c) < 1024:
-                self.trace_c.extend([self.pnt_c.map_x+self.rad, self.pnt_c.map_y+self.rad])
-            if len(self.trace_d) < 2048:
-                self.trace_d.extend([self.pnt_d.map_x+self.rad, self.pnt_d.map_y+self.rad])
+            x_c = int(self.pnt_c.map_x+self.rad)
+            y_c = int(self.pnt_c.map_y+self.rad)
+            x_d = int(self.pnt_d.map_x+self.rad)
+            y_d = int(self.pnt_d.map_y+self.rad)
+
+            if len(self.trace_c) < 384 and self.trace_test(self.trace_c, x_c, y_c):
+                self.trace_c.extend([x_c, y_c])
+            if len(self.trace_d) < 384 and self.trace_test(self.trace_d, x_d, y_d):
+                self.trace_d.extend([x_d, y_d])
                 if len(self.trace_d) >= 4:
                     self.fast_trace(self.trace_d, old_d[2], ang[1], leng[1], self.pnt_b)
 
@@ -200,12 +217,17 @@ class FourBars(FloatLayout):
             self.pnt_c.map_x = leng[2]*math.cos(ang[0]*math.pi/180)+self.pnt_a.map_x
             self.pnt_c.map_y = leng[2]*math.sin(ang[0]*math.pi/180)+self.pnt_a.map_y
 
-            if len(self.trace_c) < 1024:
-                self.trace_c.extend([self.pnt_c.map_x+self.rad, self.pnt_c.map_y+self.rad])
+            x_c = int(self.pnt_c.map_x+self.rad)
+            y_c = int(self.pnt_c.map_y+self.rad)
+            x_d = int(self.pnt_d.map_x+self.rad)
+            y_d = int(self.pnt_d.map_y+self.rad)
+
+            if len(self.trace_c) < 384 and self.trace_test(self.trace_c, x_c, y_c):
+                self.trace_c.extend([x_c, y_c])
                 if len(self.trace_c) >= 4:
                     self.fast_trace(self.trace_c, old_c[2], ang[0], leng[2], self.pnt_a)
-            if len(self.trace_d) < 1024:
-                self.trace_d.extend([self.pnt_d.map_x+self.rad, self.pnt_d.map_y+self.rad])
+            if len(self.trace_d) < 384 and self.trace_test(self.trace_d, x_d, y_d):
+                self.trace_d.extend([x_d, y_d])
 
         elif self.type_bar == 'Double Rocker':
 
@@ -228,13 +250,18 @@ class FourBars(FloatLayout):
             self.pnt_d.map_y=leng[2]*math.sin(ang[0]*math.pi/180)+leng[3]*math.sin(ang[3]*math.pi/180)+self.pnt_a.map_y
             ang = self.calc_angles()
 
-            if len(self.trace_c) < 1024:
-                self.trace_c.extend([self.pnt_c.map_x+self.rad, self.pnt_c.map_y+self.rad])
+            x_c = int(self.pnt_c.map_x+self.rad)
+            y_c = int(self.pnt_c.map_y+self.rad)
+            x_d = int(self.pnt_d.map_x+self.rad)
+            y_d = int(self.pnt_d.map_y+self.rad)
+
+            if len(self.trace_c) < 384 and self.trace_test(self.trace_c, x_c, y_c):
+                self.trace_c.extend([x_c, y_c])
                 if len(self.trace_c) >= 4:
                     self.fast_trace(self.trace_c, old_c[2], ang[0], leng[2], self.pnt_a)
 
-            if len(self.trace_d) < 1024:
-                self.trace_d.extend([self.pnt_d.map_x+self.rad, self.pnt_d.map_y+self.rad])
+            if len(self.trace_d) < 384 and self.trace_test(self.trace_d, x_d, y_d):
+                self.trace_d.extend([x_d, y_d])
                 if len(self.trace_d) >= 4:
                     self.fast_trace(self.trace_d, old_d[2], ang[1], leng[1], self.pnt_b)
 
@@ -332,8 +359,8 @@ class FourBars(FloatLayout):
     def transition(self, dt):
         leng = self.calc_lengths()
         self.remove_widget(self.lines)
-        self.add_lines()
         self.type_of(leng)
+        self.add_lines()
 
     def fast_trace(self, trace, old, new, leng, pnt):
 
@@ -343,29 +370,30 @@ class FourBars(FloatLayout):
         a_y = trace[-3]
         hyp = ((b_y - a_y)**2 + (b_x - a_x)**2)**0.5
         theta = math.acos((2*leng**2-hyp**2)/(2*leng**2))*180/math.pi
-
-        a = 1
+        c = 6
+        a = c
         if (new - old < 0 or new - old > 180) and new - old > -180:
-            a = -1
+            a = -c
 
         alpha = old
         test = 0
         while True:
             alpha += a
-            test += 1
+            test += c
             if test >= theta:
                 break
             alpha = self.angle_domain(alpha)
-            trace.insert(-2, leng*math.cos(alpha*math.pi/180)+pnt.map_x+self.rad)
-            trace.insert(-2, leng*math.sin(alpha*math.pi/180)+pnt.map_y+self.rad)
+            trace.insert(-2, int(leng*math.cos(alpha*math.pi/180)+pnt.map_x+self.rad))
+            trace.insert(-2, int(leng*math.sin(alpha*math.pi/180)+pnt.map_y+self.rad))
 
     def add_lines(self):
-        a = self.rad
+        a = int(self.rad)
         b = dp(2)
         bars = []
         for pnt in self.pnts:
             bars.append(pnt.map_x)
             bars.append(pnt.map_y)
+        pnts = bars
         bars.append(self.pnt_a.map_x)
         bars.append(self.pnt_a.map_y)
         bars = [x+a for x in bars]
@@ -377,22 +405,21 @@ class FourBars(FloatLayout):
             Line(points=self.trace_c, width=1)
             Color(0.8039, 0.2275, 0.3098, 1)
             Line(points=self.trace_d, width=1)
-
             Color(0.349, 0.349, 0.349, 1)
             Line(points=bars, width=b)
 
-            Ellipse(pos=self.pnt_a.get_pos(), size=(a*2, a*2))
-            Ellipse(pos=self.pnt_b.get_pos(), size=(a*2, a*2))
+            Ellipse(pos=(pnts[0], pnts[1]), size=(a*2, a*2))
+            Ellipse(pos=(pnts[2], pnts[3]), size=(a*2, a*2))
             Color(0.2, 0.2, 0.2, 1)
-            Ellipse(pos=(self.pnt_a.get_pos()[0]+dp(4), self.pnt_a.get_pos()[1]+dp(4)), size=(a*2-dp(8), a*2-dp(8)))
-            Ellipse(pos=(self.pnt_b.get_pos()[0]+dp(4), self.pnt_b.get_pos()[1]+dp(4)), size=(a*2-dp(8), a*2-dp(8)))
+            Ellipse(pos=(pnts[0]+dp(4), pnts[1]+dp(4)), size=(a*2-dp(8), a*2-dp(8)))
+            Ellipse(pos=(pnts[2]+dp(4), pnts[3]+dp(4)), size=(a*2-dp(8), a*2-dp(8)))
             Color(0.349, 0.349, 0.349, 1)
-            Ellipse(pos=self.pnt_c.get_pos(), size=(a*2, a*2))
-            Ellipse(pos=self.pnt_d.get_pos(), size=(a*2, a*2))
+            Ellipse(pos=(pnts[6], pnts[7]), size=(a*2, a*2))
+            Ellipse(pos=(pnts[4], pnts[5]), size=(a*2, a*2))
             Color(0.2196, 0.6431, 0.8, 1)
-            Ellipse(pos=(self.pnt_c.get_pos()[0]+dp(4), self.pnt_c.get_pos()[1]+dp(4)), size=(a*2-dp(8), a*2-dp(8)))
+            Ellipse(pos=(pnts[6]+dp(4), pnts[7]+dp(4)), size=(a*2-dp(8), a*2-dp(8)))
             Color(0.8039, 0.2275, 0.3098, 1)
-            Ellipse(pos=(self.pnt_d.get_pos()[0]+dp(4), self.pnt_d.get_pos()[1]+dp(4)), size=(a*2-dp(8), a*2-dp(8)))
+            Ellipse(pos=(pnts[4]+dp(4), pnts[5]+dp(4)), size=(a*2-dp(8), a*2-dp(8)))
 
         self.add_widget(self.lines)
 
@@ -549,7 +576,7 @@ class RootWindow(FloatLayout):
         self.ids.fourbar.omega_dc = []
         self.ids.fourbar.omega_ca = []
         self.ids.fourbar.omega_db = []
-        self.ids.fourbar.time = 0
+
         self.ids.fourbar.pos_ca = []
         self.ids.fourbar.pos_dc = []
         self.ids.fourbar.pos_db = []
@@ -558,7 +585,6 @@ class RootWindow(FloatLayout):
     def unpause(self):
         Clock.unschedule(self.ids.fourbar.transition)
         self.ids.fourbar.lengt = self.ids.fourbar.calc_lengths()
-        #print('-----RESTART-----'*10)
         Clock.schedule_interval(self.ids.fourbar.update, 1.0 / 30.0)
 
     def r_reset(self):
@@ -646,7 +672,7 @@ class RootWindow(FloatLayout):
             Clock.schedule_once(partial(self.graph_build, self.graph_type), 1)
 
     def resize(self):
-        #print('---RESIZE---'*10)
+
         try:
             self.ids.fourbar.remove_widget(self.ids.fourbar.graph_paper)
             Clock.schedule_once(self.ids.fourbar.graph_paper_draw, 0)
@@ -680,7 +706,7 @@ class RootWindow(FloatLayout):
             data = json.load(fd)
         self.ids.fourbar.data = data
 
-        for i,pnt in enumerate(self.ids.fourbar.pnts):
+        for i, pnt in enumerate(self.ids.fourbar.pnts):
             pnt.name = self.ids.fourbar.data['name'][i]
             pnt.map_x = self.ids.fourbar.data['map_x'][i]
             pnt.map_y = self.ids.fourbar.data['map_y'][i]
@@ -769,7 +795,6 @@ class RootWindow(FloatLayout):
 
             self.y_min, self.y_max, self.y_tick, self.title = x[0], x[1], x[2], 'Angular Velocity'
             self.graphy()
-
             self.plot_ca.points = [(x, y) for x, y in enumerate(self.ids.fourbar.omega_ca)]
             self.plot_db.points = [(x, y) for x, y in enumerate(self.ids.fourbar.omega_db)]
             self.plot_dc.points = [(x, y) for x, y in enumerate(self.ids.fourbar.omega_dc)]
@@ -814,8 +839,8 @@ class RootWindow(FloatLayout):
 
     def calc_y_axis(self):
 
-        if len(self.ids.fourbar.omega_ca) < 90 or self.ids.fourbar.omega_ca is []:
-            return (0, 0, 0)
+        if len(self.ids.fourbar.omega_ca) < 90 or not self.ids.fourbar.omega_ca:
+            return 0, 0, 0
 
         data = [self.ids.fourbar.omega_ca, self.ids.fourbar.omega_db, self.ids.fourbar.omega_dc]
         y_max = 0
@@ -834,7 +859,7 @@ class RootWindow(FloatLayout):
         delta = abs(y_max - y_min)
         y_tick = delta/5
 
-        return (y_min, y_max, y_tick)
+        return y_min, y_max, y_tick
 
     def graphy(self):
 
@@ -863,13 +888,13 @@ class RootWindow(FloatLayout):
             self.ids.fourbar.dir = self.ids.speed.value
         else:
             self.ids.fourbar.dir = -1*self.ids.speed.value
-
+        self.pause()
+        self.unpause()
 
 class CustomGraph(Graph):
 
     def __init__(self, **kwargs):
         super(CustomGraph, self).__init__(**kwargs)
-
 
         with self._fbo:
             Color(0.349, 0.349, 0.349, 1)
