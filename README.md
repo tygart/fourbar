@@ -9,15 +9,15 @@ of a four bar linkage are less than the sum of the other two, the smallest membe
 it's neighbor. When this condition is satisfied, the app will  rotate the smallest member at a constantly velocity.  This
 leads to some interesting mechanical behaviors that are difficult to express from a book or in a lecture setting.  The
 app is also not math heavy.  Rather learning is accomplished through observation and experimentation.  While the app is
-aimed more at engineering students, I think others will find it interesting if not peek someones interest in the phsical
+aimed more at engineering students, I think others will find it interesting if not peek someones interest in the physical
 sciences.
 
-The app itself is themed after the green tinted graphing paper usually used to make technical drawings.  I like how you
-can hide most of the widgets and it looks like you are just working on a piece of graph paper.  The four-bar sits in a 2D
-scroll so it can be easily moved to compare the motion to the graphs or get access to the motion controls on the
-sidebar.  I made sure it worked in both landscape and portrait for an android tablet, but I don't think it will look that
-great on smaller devices like phones.
+The app itself is themed after the green tinted graphing paper that I have used to make technical drawings.  I like how
+you can hide most of the widgets, and it looks like you are just working on a piece of graph paper.  The four-bar sits in
+a 2D scroll so it can be easily moved to compare the motion to the graphs or get access to the motion controls on the
+sidebar.  Length changes are made by holding down and dragging one of the bar end points.  The app works in both landscape
+and portrait mode.  I also made use of the metrics so it should look the same for multiple devices.
 
-Here are some [imgur screen captures](https://imgur.com/a/0uJLI "Title") running on an android device.
+Here are some [screen captures](https://imgur.com/a/0uJLI "Title") running on an android device.
 
 
