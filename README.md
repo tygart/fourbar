@@ -1,5 +1,11 @@
+This app earned a 2nd place finish in [Kivy App Contest 2014](http://kivy.org/#contest). Please check out the other fine
+apps in the contest.
+
 ## Installation:
-The buildozer tool can be used to build the app, or the android apk in the bin can be installed directly.
+This app was made utilizing the kivy library.  Please refer to [kivy.org](http://kivy.org/) for its installation.
+Additionally, the app requires navigationdrawer and graph from the [kivy-garden](https://github.com/kivy-garden) in
+order to run.  The [buildozer tool](https://github.com/kivy/buildozer) can be used to build the app, or the android apk
+in the bin can be installed directly.
 
 
 ## About the App:
